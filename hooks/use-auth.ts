@@ -51,7 +51,6 @@ export function useAuth() {
     userData: {
       firstName: string
       lastName: string
-      phone: string
     },
   ) => {
     setAuthLoading(true)
@@ -69,7 +68,6 @@ export function useAuth() {
           firstName: userData.firstName,
           lastName: userData.lastName,
           email,
-          phone: userData.phone,
           createdAt: new Date(),
           role: "user",
         })

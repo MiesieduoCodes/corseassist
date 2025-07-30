@@ -70,7 +70,6 @@ export default function RelocationPage() {
     desiredState: "",
     desiredLGA: "",
     reason: "",
-    phoneNumber: "",
     email: "",
   })
 
@@ -177,28 +176,16 @@ export default function RelocationPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="phoneNumber">Phone Number</Label>
+                    <Label htmlFor="email">Email Address</Label>
                     <Input
-                      id="phoneNumber"
-                      type="tel"
-                      placeholder="+234 800 123 4567"
-                      value={formData.phoneNumber}
-                      onChange={(e) => handleChange("phoneNumber", e.target.value)}
+                      id="email"
+                      type="email"
+                      placeholder="Enter your email address"
+                      value={formData.email}
+                      onChange={(e) => handleChange("email", e.target.value)}
                       required
                     />
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email address"
-                    value={formData.email}
-                    onChange={(e) => handleChange("email", e.target.value)}
-                    required
-                  />
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">

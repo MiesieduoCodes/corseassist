@@ -10,14 +10,14 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Navbar } from "@/components/navbar"
 import { useToast } from "@/hooks/use-toast"
-import { CreditCard, Shield, CheckCircle, ArrowLeft, Lock, Smartphone } from "lucide-react"
+import { Shield, CheckCircle, ArrowLeft, Lock, Building2 } from "lucide-react"
 import Link from "next/link"
-import { processFlutterwavePayment, saveServiceRequest } from "@/lib/firebase"
 
 interface PlanData {
   service: string
   price?: string
   amount: number
+  formData?: any
 }
 
 export default function PaymentPage() {
@@ -25,36 +25,53 @@ export default function PaymentPage() {
   const { toast } = useToast()
   const [planData, setPlanData] = useState<PlanData | null>(null)
   const [loading, setLoading] = useState(false)
-  const [paymentMethod, setPaymentMethod] = useState<"card" | "bank" | "ussd">("card")
+  const [paymentMethod, setPaymentMethod] = useState<"bank">("bank")
   const [formData, setFormData] = useState({
     email: "",
-    phone: "",
     fullName: "",
   })
 
   useEffect(() => {
-    const data = localStorage.getItem("selectedPlan") || localStorage.getItem("pendingService")
+    // First try pendingService, then selectedPlan
+    const pendingData = localStorage.getItem("pendingService")
+    const selectedData = localStorage.getItem("selectedPlan")
+
+    const data = pendingData || selectedData
+
     if (data) {
       try {
         const parsedData = JSON.parse(data)
+        console.log("Parsed payment data:", parsedData) // Debug log
 
         // Ensure we have the required fields with proper defaults
         const serviceData = {
           service: parsedData.service || "Unknown Service",
-          price: parsedData.price || "₦0",
+          price: parsedData.price || `₦${(parsedData.amount || 0).toLocaleString()}`,
           amount: parsedData.amount || 0,
           formData: parsedData.formData || {},
         }
 
+        console.log("Processed service data:", serviceData) // Debug log
         setPlanData(serviceData)
       } catch (error) {
         console.error("Error parsing service data:", error)
+        toast({
+          title: "Error loading service data",
+          description: "Please go back and select a service again",
+          variant: "destructive",
+        })
         router.push("/")
       }
     } else {
+      console.log("No service data found in localStorage") // Debug log
+      toast({
+        title: "No service selected",
+        description: "Please select a service first",
+        variant: "destructive",
+      })
       router.push("/")
     }
-  }, [router])
+  }, [router, toast])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
@@ -63,17 +80,19 @@ export default function PaymentPage() {
     }))
   }
 
-  const handlePayment = async () => {
-    if (!planData || !planData.amount) {
+  const handleProceedToBankTransfer = () => {
+    console.log("Proceeding to bank transfer with data:", planData) // Debug log
+
+    if (!planData || !planData.amount || planData.amount === 0) {
       toast({
         title: "Invalid service data",
-        description: "Please select a service first",
+        description: "Service amount is missing. Please go back and select a service again.",
         variant: "destructive",
       })
       return
     }
 
-    if (!formData.phone || !formData.fullName || !formData.email) {
+    if (!formData.fullName || !formData.email) {
       toast({
         title: "Missing information",
         description: "Please fill in all required fields",
@@ -82,53 +101,15 @@ export default function PaymentPage() {
       return
     }
 
-    setLoading(true)
-
-    try {
-      // Initialize Flutterwave payment
-      const paymentResult = await processFlutterwavePayment({
-        amount: planData.amount,
-        email: formData.email,
-        phone: formData.phone,
-        name: formData.fullName,
-        service: planData.service,
-        userId: `guest_${Date.now()}`,
-      })
-
-      if (paymentResult.success) {
-        // Save service request to database
-        await saveServiceRequest({
-          userId: `guest_${Date.now()}`,
-          service: planData.service,
-          amount: planData.amount,
-          formData: formData,
-          paymentId: paymentResult.transactionId,
-          status: "pending",
-          paymentMethod,
-        })
-
-        // Clear stored plan data
-        localStorage.removeItem("selectedPlan")
-        localStorage.removeItem("pendingService")
-
-        toast({
-          title: "Payment Successful! 🎉",
-          description: "Your service request has been submitted successfully",
-        })
-
-        router.push("/success")
-      } else {
-        throw new Error(paymentResult.message || "Payment failed")
-      }
-    } catch (error: any) {
-      toast({
-        title: "Payment Failed",
-        description: error.message || "Please try again or contact support",
-        variant: "destructive",
-      })
-    } finally {
-      setLoading(false)
+    // Store customer info and proceed to bank transfer details
+    const transferData = {
+      ...planData,
+      customerInfo: formData,
     }
+
+    console.log("Saving transfer data:", transferData) // Debug log
+    localStorage.setItem("transferData", JSON.stringify(transferData))
+    router.push("/bank-transfer")
   }
 
   if (!planData) {
@@ -142,16 +123,6 @@ export default function PaymentPage() {
     )
   }
 
-  const paymentMethods = [
-    {
-      id: "bank",
-      name: "Bank Transfer",
-      description: "Direct bank transfer",
-      icon: Shield,
-      popular: false,
-    }
-  ]
-
   const displayPrice = planData?.price || `₦${(planData?.amount || 0).toLocaleString()}`
 
   return (
@@ -162,16 +133,16 @@ export default function PaymentPage() {
         <div className="max-w-4xl mx-auto">
           {/* Back Button */}
           <Button asChild variant="ghost" className="mb-6 hover:bg-green-50 hover:text-green-600">
-            <Link href="/select-plan" className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2">
               <ArrowLeft className="w-4 h-4" />
-              Back to Plan Selection
+              Back to Services
             </Link>
           </Button>
 
           {/* Header */}
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">Complete Your Payment</h1>
-            <p className="text-xl text-gray-600">Secure payment processing powered by Flutterwave</p>
+            <p className="text-xl text-gray-600">Secure bank transfer payment</p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8">
@@ -213,20 +184,6 @@ export default function PaymentPage() {
                       className="h-12 border-2 border-gray-200 focus:border-green-500"
                     />
                   </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Phone Number</Label>
-                    <Input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      placeholder="+234 800 123 4567"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      required
-                      className="h-12 border-2 border-gray-200 focus:border-green-500"
-                    />
-                  </div>
                 </CardContent>
               </Card>
 
@@ -234,44 +191,24 @@ export default function PaymentPage() {
               <Card className="shadow-lg border-0">
                 <CardHeader>
                   <CardTitle>Payment Method</CardTitle>
-                  <CardDescription>Choose your preferred payment option</CardDescription>
+                  <CardDescription>Bank transfer is the only available payment option</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {paymentMethods.map((method) => (
-                    <div
-                      key={method.id}
-                      className={`p-4 border-2 rounded-lg cursor-pointer transition-all duration-200 ${
-                        paymentMethod === method.id
-                          ? "border-green-500 bg-green-50"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
-                      onClick={() => setPaymentMethod(method.id as any)}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className={`w-4 h-4 rounded-full border-2 ${
-                            paymentMethod === method.id ? "border-green-500 bg-green-500" : "border-gray-300"
-                          }`}
-                        >
-                          {paymentMethod === method.id && (
-                            <div className="w-full h-full rounded-full bg-white scale-50"></div>
-                          )}
+                  <div className="p-4 border-2 border-green-500 bg-green-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className="w-4 h-4 rounded-full border-2 border-green-500 bg-green-500">
+                        <div className="w-full h-full rounded-full bg-white scale-50"></div>
+                      </div>
+                      <Building2 className="w-5 h-5 text-gray-600" />
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-gray-900">Bank Transfer</span>
+                          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Secure</span>
                         </div>
-                        <method.icon className="w-5 h-5 text-gray-600" />
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-gray-900">{method.name}</span>
-                            {method.popular && (
-                              <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                                Popular
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-sm text-gray-600">{method.description}</p>
-                        </div>
+                        <p className="text-sm text-gray-600">Direct bank transfer</p>
                       </div>
                     </div>
-                  ))}
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -281,7 +218,7 @@ export default function PaymentPage() {
               <Card className="shadow-2xl border-0 bg-white">
                 <CardHeader className="text-center pb-6">
                   <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <CreditCard className="w-8 h-8 text-white" />
+                    <Building2 className="w-8 h-8 text-white" />
                   </div>
                   <CardTitle className="text-2xl font-bold">Order Summary</CardTitle>
                   <CardDescription>Review your purchase details</CardDescription>
@@ -294,6 +231,14 @@ export default function PaymentPage() {
                       <span className="font-medium text-gray-700">{planData.service}</span>
                       <span className="font-bold text-gray-900">{displayPrice}</span>
                     </div>
+
+                    {/* Debug info - remove in production */}
+                    <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
+                      <div>Amount: {planData.amount}</div>
+                      <div>Price: {planData.price}</div>
+                      <div>Display Price: {displayPrice}</div>
+                    </div>
+
                     <div className="border-t pt-4">
                       <div className="flex justify-between items-center text-xl font-bold">
                         <span>Total</span>
@@ -304,19 +249,19 @@ export default function PaymentPage() {
 
                   {/* Payment Button */}
                   <Button
-                    onClick={handlePayment}
-                    disabled={loading || !formData.phone || !formData.fullName || !formData.email}
+                    onClick={handleProceedToBankTransfer}
+                    disabled={loading || !formData.fullName || !formData.email || !planData.amount}
                     className="w-full h-14 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 text-white font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
                   >
                     {loading ? (
                       <div className="flex items-center gap-2">
                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        Processing Payment...
+                        Processing...
                       </div>
                     ) : (
                       <div className="flex items-center gap-2">
-                        <Lock className="w-5 h-5" />
-                        Pay {displayPrice} Securely
+                        <Building2 className="w-5 h-5" />
+                        Proceed to Bank Transfer
                       </div>
                     )}
                   </Button>
@@ -329,18 +274,18 @@ export default function PaymentPage() {
                         <span className="text-sm font-medium">Secure Payment</span>
                       </div>
                       <p className="text-sm text-green-700">
-                        Your payment is protected by Flutterwave's bank-level security and 256-bit SSL encryption.
+                        Your payment is protected by bank-level security and verified account details.
                       </p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 text-center">
                       <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
                         <CheckCircle className="w-4 h-4 text-green-600" />
-                        <span>SSL Encrypted</span>
+                        <span>Bank Verified</span>
                       </div>
                       <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
                         <CheckCircle className="w-4 h-4 text-green-600" />
-                        <span>PCI Compliant</span>
+                        <span>Secure Transfer</span>
                       </div>
                     </div>
                   </div>

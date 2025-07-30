@@ -18,7 +18,6 @@ export default function RegisterPage() {
     firstName: "",
     lastName: "",
     email: "",
-    phone: "",
     password: "",
     confirmPassword: "",
   })
@@ -63,7 +62,6 @@ export default function RegisterPage() {
       await register(formData.email, formData.password, {
         firstName: formData.firstName,
         lastName: formData.lastName,
-        phone: formData.phone,
       })
       toast({
         title: "Account created successfully! 🎉",
@@ -186,22 +184,6 @@ export default function RegisterPage() {
                     type="email"
                     placeholder="john@example.com"
                     value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="h-11 border-2 border-gray-200 focus:border-green-500 focus:ring-green-500/20 transition-all duration-200"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="phone" className="text-sm font-semibold text-gray-700">
-                    Phone Number
-                  </Label>
-                  <Input
-                    id="phone"
-                    name="phone"
-                    type="tel"
-                    placeholder="+234 800 123 4567"
-                    value={formData.phone}
                     onChange={handleChange}
                     required
                     className="h-11 border-2 border-gray-200 focus:border-green-500 focus:ring-green-500/20 transition-all duration-200"
