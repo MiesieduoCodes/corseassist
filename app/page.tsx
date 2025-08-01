@@ -41,7 +41,7 @@ export default function HomePage() {
 
   const stats = [
     { label: "Happy Clients", value: "5,000+", icon: Users, color: "text-blue-600" },
-    { label: "Success Rate", value: "98%", icon: CheckCircle, color: "text-green-600" },
+    { label: "Success Rate", value: "80%", icon: CheckCircle, color: "text-green-600" },
     { label: "Processing Time", value: "24hrs", icon: Clock, color: "text-orange-600" },
     { label: "Secure Platform", value: "100%", icon: Shield, color: "text-purple-600" },
   ]
