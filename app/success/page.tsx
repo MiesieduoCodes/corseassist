@@ -77,10 +77,6 @@ export default function SuccessPage() {
             <h3 className="font-semibold text-blue-900 mb-4">Need Help?</h3>
             <div className="grid md:grid-cols-2 gap-4">
               <div className="flex items-center gap-2 text-blue-800">
-                <Phone className="w-4 h-4" />
-                <span>+234 800 123 4567</span>
-              </div>
-              <div className="flex items-center gap-2 text-blue-800">
                 <Mail className="w-4 h-4" />
                 <span>support@nyscplatform.com</span>
               </div>
