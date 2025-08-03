@@ -16,7 +16,7 @@ export function Navbar() {
             href="/"
             className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent"
           >
-            NYSC Platform
+            CorpsAssist
           </Link>
 
           {/* Desktop Navigation */}
@@ -60,14 +60,6 @@ export function Navbar() {
               <Link href="/#contact" className="text-gray-600 hover:text-green-600 transition-colors font-medium">
                 Contact
               </Link>
-              <div className="pt-4 border-t">
-                <Button
-                  asChild
-                  className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white w-full"
-                >
-                  <Link href="/#services">Get Started</Link>
-                </Button>
-              </div>
             </div>
           </div>
         )}
