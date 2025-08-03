@@ -18,8 +18,8 @@ export function Navbar() {
             <Image
               src="/logo.png"
               alt="CorpsAssist Logo"
-              width={40}
-              height={40}
+              width={60}
+              height={60}
               className="h-8 w-auto"
             />
             <Link
