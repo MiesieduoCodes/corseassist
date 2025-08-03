@@ -268,7 +268,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-5 gap-8 mb-12">
             <div className="md:col-span-2">
               <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
-                NYSC Platform
+                CorpsAssist
               </h3>
               <p className="text-gray-400 mb-6 leading-relaxed">
                 Your trusted partner for all NYSC services and requirements. We make your service year journey smooth
@@ -303,7 +303,6 @@ export default function HomePage() {
                 <li className="hover:text-white transition-colors cursor-pointer">Help Center</li>
                 <li className="hover:text-white transition-colors cursor-pointer">Contact Us</li>
                 <li className="hover:text-white transition-colors cursor-pointer">FAQ</li>
-                <li className="hover:text-white transition-colors cursor-pointer">Live Chat</li>
               </ul>
             </div>
 
@@ -312,11 +311,7 @@ export default function HomePage() {
               <ul className="space-y-3 text-gray-400">
                 <li className="flex items-center gap-2">
                   <Mail className="w-4 h-4" />
-                  <span>support@nyscplatform.com</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Phone className="w-4 h-4" />
-                  <span>+234 800 123 4567</span>
+                  <span>support@corpsassist.shop</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <MapPin className="w-4 h-4" />
@@ -327,7 +322,7 @@ export default function HomePage() {
           </div>
 
           <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 mb-4 md:mb-0">&copy; 2024 NYSC Platform. All rights reserved.</p>
+            <p className="text-gray-400 mb-4 md:mb-0">&copy; 2025 CorpsAssist. All rights reserved.</p>
             <div className="flex gap-6 text-sm text-gray-400">
               <span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span>
               <span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span>
