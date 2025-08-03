@@ -316,74 +316,77 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-5 gap-8 mb-12">
-            <div className="md:col-span-2">
-              <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
-                CorpsAssist
-              </h3>
-              <p className="text-gray-400 mb-6 leading-relaxed">
-                Your trusted partner for all NYSC services and requirements. We make your service year journey smooth
-                and successful.
-              </p>
-              <div className="flex gap-4">
-                <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors cursor-pointer">
-                  <span className="text-sm font-bold">f</span>
-                </div>
-                <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors cursor-pointer">
-                  <span className="text-sm font-bold">t</span>
-                </div>
-                <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors cursor-pointer">
-                  <span className="text-sm font-bold">in</span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-6 text-lg">Services</h4>
-              <ul className="space-y-3 text-gray-400">
-                <li className="hover:text-white transition-colors cursor-pointer">Direct Posting</li>
-                <li className="hover:text-white transition-colors cursor-pointer">Relocation</li>
-                <li className="hover:text-white transition-colors cursor-pointer">PPA Change</li>
-                <li className="hover:text-white transition-colors cursor-pointer">Document Processing</li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-6 text-lg">Support</h4>
-              <ul className="space-y-3 text-gray-400">
-                <li className="hover:text-white transition-colors cursor-pointer">Help Center</li>
-                <li className="hover:text-white transition-colors cursor-pointer">Contact Us</li>
-                <li className="hover:text-white transition-colors cursor-pointer">FAQ</li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-6 text-lg">Contact</h4>
-              <ul className="space-y-3 text-gray-400">
-                <li className="flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  <span>support@corpsassist.shop</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
-                  <span>Lagos, Nigeria</span>
-                </li>
-              </ul>
-            </div>
+{/* Footer */}
+<footer className="bg-gray-900 text-white py-16">
+  <div className="container mx-auto px-4">
+    <div className="grid md:grid-cols-5 gap-8 mb-12">
+      <div className="md:col-span-2">
+        <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+          CorpsAssist
+        </h3>
+        <p className="text-gray-400 mb-6 leading-relaxed">
+          Your trusted partner for all NYSC services and requirements. We make your service year journey smooth
+          and successful.
+        </p>
+        <div className="flex gap-4">
+          <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors cursor-pointer">
+            <span className="text-sm font-bold">f</span>
           </div>
-
-          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 mb-4 md:mb-0">&copy; 2025 CorpsAssist. All rights reserved.</p>
-            <div className="flex gap-6 text-sm text-gray-400">
-              <span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span>
-              <span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span>
-              <span className="hover:text-white transition-colors cursor-pointer">Cookie Policy</span>
-            </div>
+          <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors cursor-pointer">
+            <span className="text-sm font-bold">t</span>
+          </div>
+          <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors cursor-pointer">
+            <span className="text-sm font-bold">in</span>
           </div>
         </div>
-      </footer>
+      </div>
+
+      <div>
+        <h4 className="font-semibold mb-6 text-lg">Services</h4>
+        <ul className="space-y-3 text-gray-400">
+          <li className="hover:text-white transition-colors cursor-pointer">Direct Posting</li>
+          <li className="hover:text-white transition-colors cursor-pointer">Relocation</li>
+          <li className="hover:text-white transition-colors cursor-pointer">PPA Change</li>
+          <li className="hover:text-white transition-colors cursor-pointer">Document Processing</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 className="font-semibold mb-6 text-lg">Support</h4>
+        <ul className="space-y-3 text-gray-400">
+          <li className="hover:text-white transition-colors cursor-pointer">Help Center</li>
+          <li className="hover:text-white transition-colors cursor-pointer">Contact Us</li>
+          <li className="hover:text-white transition-colors cursor-pointer">FAQ</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 className="font-semibold mb-6 text-lg">Contact</h4>
+        <ul className="space-y-3 text-gray-400">
+          <li className="flex items-center gap-2">
+            <Mail className="w-4 h-4" />
+            <a href="mailto:Choowally8@gmail.com" className="hover:text-white transition-colors">
+              support@corpsassist.shop
+            </a>
+          </li>
+          <li className="flex items-center gap-2">
+            <MapPin className="w-4 h-4" />
+            <span>Lagos, Nigeria</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+      <p className="text-gray-400 mb-4 md:mb-0">&copy; 2025 CorpsAssist. All rights reserved.</p>
+      <div className="flex gap-6 text-sm text-gray-400">
+        <span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span>
+        <span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span>
+        <span className="hover:text-white transition-colors cursor-pointer">Cookie Policy</span>
+      </div>
+    </div>
+  </div>
+</footer>
     </div>
   )
 }
