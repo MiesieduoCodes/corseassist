@@ -94,7 +94,7 @@ export default function HomePage() {
 
             <p className="text-xl md:text-2xl text-gray-600 mb-10 leading-relaxed max-w-3xl mx-auto">
               Professional assistance for direct posting, relocation, and PPA changes.
-              <span className="font-semibold text-green-600">Fast, secure, and reliable</span> service with 98% success
+              <span className="font-semibold text-green-600">Fast, secure, and reliable</span> service with 80% success
               rate.
             </p>
 
