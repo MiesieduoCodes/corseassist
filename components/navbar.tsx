@@ -33,9 +33,6 @@ export function Navbar() {
             <Link href="/#contact" className="text-gray-600 hover:text-green-600 transition-colors font-medium">
               Contact
             </Link>
-            <Link href="/admin-login" className="text-green-600 hover:text-green-700 transition-colors font-medium font-semibold">
-              Admin Login
-            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -56,9 +53,6 @@ export function Navbar() {
               </Link>
               <Link href="/#contact" className="text-gray-600 hover:text-green-600 transition-colors font-medium">
                 Contact
-              </Link>
-              <Link href="/admin-login" className="text-green-600 hover:text-green-700 transition-colors font-medium font-semibold">
-                Admin Login
               </Link>
             </div>
           </div>
