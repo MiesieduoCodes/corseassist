@@ -86,7 +86,7 @@ export default function ChangePPAPage() {
     const serviceData = {
       service: "PPA Change",
       amount: 30000,
-      price: "₦30,000",
+      price: "₦",
       formData,
       uploadedFile: {
         name: uploadedFile.name,

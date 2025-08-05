@@ -3,14 +3,14 @@ import { getAuth } from "firebase/auth"
 import { getFirestore, collection, addDoc, query, where, getDocs, orderBy } from "firebase/firestore"
 import { getStorage } from "firebase/storage"
 
-// Mock Firebase config for development
+// Production Firebase config
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "mock-api-key",
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || "mock-project.firebaseapp.com",
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "mock-project",
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || "mock-project.appspot.com",
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || "123456789",
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || "1:123456789:web:abcdef123456",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 }
 
 let app: any = null
@@ -61,9 +61,34 @@ export async function saveServiceRequest(data: {
       throw error
     }
   } else {
-    // Mock implementation
-    console.log("Mock: Saving service request", data)
-    return `mock_${Date.now()}`
+    // Save to localStorage for admin dashboard
+    const requestData = {
+      id: `request_${Date.now()}`,
+      userId: data.userId,
+      service: data.service,
+      status: data.status,
+      amount: data.amount,
+      createdAt: new Date(),
+      formData: data.formData,
+      userEmail: data.formData?.customerInfo?.email || data.formData?.email || "N/A",
+      phoneNumber: data.formData?.phoneNumber || data.formData?.customerInfo?.phoneNumber || "N/A",
+      transactionId: data.paymentId,
+      paymentMethod: data.paymentMethod || "bank_transfer",
+      fullName: data.formData?.customerInfo?.fullName || data.formData?.fullName || "N/A",
+    }
+
+    // Get existing requests
+    const existingRequests = localStorage.getItem("serviceRequests")
+    const requests = existingRequests ? JSON.parse(existingRequests) : []
+    
+    // Add new request
+    requests.unshift(requestData)
+    
+    // Save back to localStorage
+    localStorage.setItem("serviceRequests", JSON.stringify(requests))
+    
+    console.log("Saved service request to localStorage:", requestData)
+    return requestData.id
   }
 }
 

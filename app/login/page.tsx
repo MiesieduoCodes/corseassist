@@ -27,6 +27,29 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
+      // Simple admin login check
+      if (email === "Admin@admin.com" && password === "Admin@123") {
+        // Create admin user object
+        const adminUser = {
+          uid: "admin_user",
+          email: "Admin@admin.com",
+          displayName: "Admin",
+          emailVerified: true,
+        }
+        
+        // Store admin user in localStorage
+        localStorage.setItem("mockUser", JSON.stringify(adminUser))
+        
+        toast({
+          title: "Welcome back! 🎉",
+          description: "You've been logged in successfully as Admin",
+        })
+        
+        router.push("/admin")
+        return
+      }
+
+      // Regular user login
       await login(email, password)
       toast({
         title: "Welcome back! 🎉",
@@ -149,21 +172,7 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* Demo Credentials */}
-            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-              <h4 className="font-semibold text-blue-900 mb-2">Demo Credentials</h4>
-              <div className="text-sm text-blue-800 space-y-1">
-                <p>
-                  <strong>User:</strong> test@example.com
-                </p>
-                <p>
-                  <strong>Admin:</strong> admin@nyscplatform.com
-                </p>
-                <p>
-                  <strong>Password:</strong> Any password works
-                </p>
-              </div>
-            </div>
+
           </CardContent>
         </Card>
       </div>

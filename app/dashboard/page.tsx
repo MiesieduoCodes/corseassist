@@ -86,7 +86,7 @@ export default function DashboardPage() {
     {
       title: "PPA Change",
       description: "Change your Place of Primary Assignment",
-      price: "₦15,000",
+      price: "₦30,000",
       href: "/services/change-ppa",
     },
   ]

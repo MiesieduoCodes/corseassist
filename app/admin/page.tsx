@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Navbar } from "@/components/navbar"
 import { useAuth } from "@/hooks/use-auth"
-import { Search, Download, Eye, CheckCircle, XCircle } from "lucide-react"
+import { Search, Download, Eye, CheckCircle, XCircle, Table, Phone, Mail, Calendar, CreditCard } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface AdminRequest {
@@ -20,6 +20,10 @@ interface AdminRequest {
   createdAt: Date
   formData: any
   userEmail: string
+  phoneNumber?: string
+  transactionId?: string
+  paymentMethod?: string
+  fullName?: string
 }
 
 export default function AdminPage() {
@@ -34,7 +38,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     // Check if user is admin (you can implement proper role checking)
-    if (user && user.email !== "admin@nyscplatform.com") {
+    if (user && user.email !== "Admin@admin.com") {
       router.push("/dashboard")
       return
     }
@@ -50,43 +54,63 @@ export default function AdminPage() {
 
   const loadRequests = async () => {
     try {
-      // Mock data - replace with actual Firebase query
-      const mockRequests: AdminRequest[] = [
-        {
-          id: "1",
-          userId: "user1",
-          service: "Direct Posting",
-          status: "pending",
-          amount: 25000,
-          createdAt: new Date("2024-01-15"),
-          formData: { fullName: "John Doe", preferredState: "Lagos" },
-          userEmail: "john@example.com",
-        },
-        {
-          id: "2",
-          userId: "user2",
-          service: "Relocation",
-          status: "approved",
-          amount: 20000,
-          createdAt: new Date("2024-01-14"),
-          formData: { fullName: "Jane Smith", desiredState: "Abuja" },
-          userEmail: "jane@example.com",
-        },
-        {
-          id: "3",
-          userId: "user3",
-          service: "PPA Change",
-          status: "rejected",
-          amount: 15000,
-          createdAt: new Date("2024-01-13"),
-          formData: { fullName: "Mike Johnson", desiredPPA: "Tech Company" },
-          userEmail: "mike@example.com",
-        },
-      ]
-
-      setRequests(mockRequests)
+      // Load real data from localStorage (for now, will be replaced with Firebase)
+      const storedRequests = localStorage.getItem("serviceRequests")
+      if (storedRequests) {
+        const requests = JSON.parse(storedRequests)
+        setRequests(requests)
+      } else {
+        // Add some sample data for testing
+        const sampleRequests: AdminRequest[] = [
+          {
+            id: "sample_1",
+            userId: "user1",
+            service: "Direct Posting",
+            status: "pending",
+            amount: 25000,
+            createdAt: new Date("2024-01-15"),
+            formData: { fullName: "John Doe", preferredState: "Lagos" },
+            userEmail: "john@example.com",
+            phoneNumber: "08012345678",
+            transactionId: "TXN123456789",
+            paymentMethod: "bank_transfer",
+            fullName: "John Doe",
+          },
+          {
+            id: "sample_2",
+            userId: "user2",
+            service: "Relocation",
+            status: "approved",
+            amount: 20000,
+            createdAt: new Date("2024-01-14"),
+            formData: { fullName: "Jane Smith", desiredState: "Abuja" },
+            userEmail: "jane@example.com",
+            phoneNumber: "08087654321",
+            transactionId: "TXN987654321",
+            paymentMethod: "bank_transfer",
+            fullName: "Jane Smith",
+          },
+          {
+            id: "sample_3",
+            userId: "user3",
+            service: "PPA Change",
+            status: "rejected",
+            amount: 30000,
+            createdAt: new Date("2024-01-13"),
+            formData: { fullName: "Mike Johnson", desiredPPA: "Tech Company" },
+            userEmail: "mike@example.com",
+            phoneNumber: "08055555555",
+            transactionId: "TXN555555555",
+            paymentMethod: "bank_transfer",
+            fullName: "Mike Johnson",
+          },
+        ]
+        setRequests(sampleRequests)
+        localStorage.setItem("serviceRequests", JSON.stringify(sampleRequests))
+      }
     } catch (error) {
       console.error("Error loading requests:", error)
+      setRequests([])
     } finally {
       setLoading(false)
     }
@@ -98,9 +122,10 @@ export default function AdminPage() {
     if (searchTerm) {
       filtered = filtered.filter(
         (request) =>
-          request.formData.fullName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (request.formData?.fullName || request.fullName || "")?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           request.userEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          request.service.toLowerCase().includes(searchTerm.toLowerCase()),
+          request.service.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (request.transactionId || "")?.toLowerCase().includes(searchTerm.toLowerCase()),
       )
     }
 
@@ -117,7 +142,17 @@ export default function AdminPage() {
 
   const updateRequestStatus = async (requestId: string, newStatus: "approved" | "rejected") => {
     try {
-      // Update in Firebase
+      // Update in localStorage
+      const existingRequests = localStorage.getItem("serviceRequests")
+      if (existingRequests) {
+        const requests = JSON.parse(existingRequests)
+        const updatedRequests = requests.map((request: AdminRequest) => 
+          request.id === requestId ? { ...request, status: newStatus } : request
+        )
+        localStorage.setItem("serviceRequests", JSON.stringify(updatedRequests))
+      }
+
+      // Update state
       setRequests((prev) =>
         prev.map((request) => (request.id === requestId ? { ...request, status: newStatus } : request)),
       )
@@ -147,7 +182,7 @@ export default function AdminPage() {
     revenue: requests.filter((r) => r.status === "approved").reduce((sum, r) => sum + r.amount, 0),
   }
 
-  if (!user || user.email !== "admin@nyscplatform.com") {
+  if (!user || user.email !== "Admin@admin.com") {
     return <div>Access denied</div>
   }
 
@@ -258,72 +293,123 @@ export default function AdminPage() {
           </CardContent>
         </Card>
 
-        {/* Requests Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Service Requests</CardTitle>
-            <CardDescription>Manage and review all service applications</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {loading ? (
-              <div className="text-center py-8">Loading...</div>
-            ) : filteredRequests.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-gray-600">No requests found</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {filteredRequests.map((request) => (
-                  <div key={request.id} className="p-4 border rounded-lg">
-                    <div className="flex justify-between items-start mb-4">
-                      <div>
-                        <h3 className="font-semibold text-lg">{request.formData.fullName}</h3>
-                        <p className="text-sm text-gray-600">{request.userEmail}</p>
-                        <p className="text-sm text-gray-500">
-                          {request.createdAt.toLocaleDateString()} • {request.service}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge className={getStatusColor(request.status)}>{request.status}</Badge>
-                        <span className="font-bold">₦{request.amount.toLocaleString()}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-between items-center">
-                      <Button variant="outline" size="sm">
-                        <Eye className="w-4 h-4 mr-2" />
-                        View Details
-                      </Button>
-
-                      {request.status === "pending" && (
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="text-green-600 border-green-600 hover:bg-green-50 bg-transparent"
-                            onClick={() => updateRequestStatus(request.id, "approved")}
-                          >
-                            <CheckCircle className="w-4 h-4 mr-2" />
-                            Approve
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="text-red-600 border-red-600 hover:bg-red-50 bg-transparent"
-                            onClick={() => updateRequestStatus(request.id, "rejected")}
-                          >
-                            <XCircle className="w-4 h-4 mr-2" />
-                            Reject
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
+                 {/* Requests Table */}
+         <Card>
+           <CardHeader>
+             <CardTitle className="flex items-center gap-2">
+               <Table className="w-5 h-5" />
+               Service Requests Table
+             </CardTitle>
+             <CardDescription>Manage and review all service applications with detailed information</CardDescription>
+           </CardHeader>
+           <CardContent>
+             {loading ? (
+               <div className="text-center py-8">Loading...</div>
+             ) : filteredRequests.length === 0 ? (
+               <div className="text-center py-8">
+                 <Table className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                 <p className="text-gray-600">No requests found</p>
+                 <p className="text-sm text-gray-500">Service requests will appear here once users submit applications</p>
+               </div>
+             ) : (
+               <div className="overflow-x-auto">
+                 <table className="w-full border-collapse">
+                   <thead>
+                     <tr className="border-b border-gray-200 bg-gray-50">
+                       <th className="text-left p-3 font-semibold text-gray-700">Name</th>
+                       <th className="text-left p-3 font-semibold text-gray-700">Contact</th>
+                       <th className="text-left p-3 font-semibold text-gray-700">Service</th>
+                       <th className="text-left p-3 font-semibold text-gray-700">Amount</th>
+                       <th className="text-left p-3 font-semibold text-gray-700">Transaction ID</th>
+                       <th className="text-left p-3 font-semibold text-gray-700">Date</th>
+                       <th className="text-left p-3 font-semibold text-gray-700">Status</th>
+                       <th className="text-left p-3 font-semibold text-gray-700">Actions</th>
+                     </tr>
+                   </thead>
+                   <tbody>
+                     {filteredRequests.map((request) => (
+                       <tr key={request.id} className="border-b border-gray-100 hover:bg-gray-50">
+                         <td className="p-3">
+                           <div>
+                             <p className="font-medium text-gray-900">
+                               {request.formData?.fullName || request.fullName || "N/A"}
+                             </p>
+                             <p className="text-sm text-gray-500">{request.userEmail}</p>
+                           </div>
+                         </td>
+                         <td className="p-3">
+                           <div className="flex items-center gap-1 text-sm text-gray-600">
+                             <Phone className="w-3 h-3" />
+                             {request.formData?.phoneNumber || request.phoneNumber || "N/A"}
+                           </div>
+                         </td>
+                         <td className="p-3">
+                           <Badge variant="outline" className="text-xs">
+                             {request.service}
+                           </Badge>
+                         </td>
+                         <td className="p-3">
+                           <span className="font-semibold text-green-600">
+                             ₦{request.amount.toLocaleString()}
+                           </span>
+                         </td>
+                         <td className="p-3">
+                           <div className="flex items-center gap-1">
+                             <CreditCard className="w-3 h-3 text-gray-400" />
+                             <span className="text-xs font-mono text-gray-600">
+                               {request.transactionId || "N/A"}
+                             </span>
+                           </div>
+                         </td>
+                         <td className="p-3">
+                           <div className="flex items-center gap-1 text-sm text-gray-600">
+                             <Calendar className="w-3 h-3" />
+                             {new Date(request.createdAt).toLocaleDateString()}
+                           </div>
+                         </td>
+                         <td className="p-3">
+                           <Badge className={getStatusColor(request.status)}>
+                             {request.status}
+                           </Badge>
+                         </td>
+                         <td className="p-3">
+                           <div className="flex items-center gap-2">
+                             <Button variant="outline" size="sm">
+                               <Eye className="w-3 h-3 mr-1" />
+                               View
+                             </Button>
+                             {request.status === "pending" && (
+                               <>
+                                 <Button
+                                   size="sm"
+                                   variant="outline"
+                                   className="text-green-600 border-green-600 hover:bg-green-50 bg-transparent"
+                                   onClick={() => updateRequestStatus(request.id, "approved")}
+                                 >
+                                   <CheckCircle className="w-3 h-3 mr-1" />
+                                   Approve
+                                 </Button>
+                                 <Button
+                                   size="sm"
+                                   variant="outline"
+                                   className="text-red-600 border-red-600 hover:bg-red-50 bg-transparent"
+                                   onClick={() => updateRequestStatus(request.id, "rejected")}
+                                 >
+                                   <XCircle className="w-3 h-3 mr-1" />
+                                   Reject
+                                 </Button>
+                               </>
+                             )}
+                           </div>
+                         </td>
+                       </tr>
+                     ))}
+                   </tbody>
+                 </table>
+               </div>
+             )}
+           </CardContent>
+         </Card>
       </div>
     </div>
   )
