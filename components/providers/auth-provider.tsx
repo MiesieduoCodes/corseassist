@@ -3,43 +3,63 @@
 import type React from "react"
 
 import { createContext, useContext, useEffect, useState } from "react"
-import type { User } from "firebase/auth"
-import { auth } from "@/lib/firebase"
-import { onAuthStateChanged } from "firebase/auth"
+
+interface AdminUser {
+  uid: string
+  email: string
+  displayName: string
+  emailVerified: boolean
+}
 
 interface AuthContextType {
-  user: User | null
+  user: AdminUser | null
   loading: boolean
+  login: (email: string, password: string) => Promise<void>
+  logout: () => void
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
+  login: async () => {},
+  logout: () => {},
 })
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<AdminUser | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (auth) {
-      // Use Firebase auth
-      const unsubscribe = onAuthStateChanged(auth, (user) => {
-        setUser(user)
-        setLoading(false)
-      })
-      return unsubscribe
-    } else {
-      // Use mock auth
-      const mockUser = localStorage.getItem("mockUser")
-      if (mockUser) {
-        setUser(JSON.parse(mockUser) as User)
-      }
-      setLoading(false)
+    // Check for admin user in localStorage
+    const adminUser = localStorage.getItem("adminUser")
+    if (adminUser) {
+      setUser(JSON.parse(adminUser) as AdminUser)
     }
+    setLoading(false)
   }, [])
 
-  return <AuthContext.Provider value={{ user, loading }}>{children}</AuthContext.Provider>
+  const login = async (email: string, password: string) => {
+    // Simple admin authentication
+    if (email === "Admin@admin.com" && password === "Admin@123") {
+      const adminUser: AdminUser = {
+        uid: "admin_user",
+        email: "Admin@admin.com",
+        displayName: "Admin",
+        emailVerified: true,
+      }
+      localStorage.setItem("adminUser", JSON.stringify(adminUser))
+      setUser(adminUser)
+    } else {
+      throw new Error("Invalid credentials")
+    }
+  }
+
+  const logout = () => {
+    localStorage.removeItem("adminUser")
+    setUser(null)
+  }
+
+  return <AuthContext.Provider value={{ user, loading, login, logout }}>{children}</AuthContext.Provider>
 }
 
 export const useAuthContext = () => useContext(AuthContext)

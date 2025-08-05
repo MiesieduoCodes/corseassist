@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -13,7 +11,7 @@ import Link from "next/link"
 import { useToast } from "@/hooks/use-toast"
 import { Eye, EyeOff, ArrowLeft, Shield, Zap } from "lucide-react"
 
-export default function LoginPage() {
+export default function AdminLoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [showPassword, setShowPassword] = useState(false)
@@ -27,44 +25,12 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      // Simple admin login check
-      if (email === "Admin@admin.com" && password === "Admin@123") {
-        // Create admin user object
-        const adminUser = {
-          uid: "admin_user",
-          email: "Admin@admin.com",
-          displayName: "Admin",
-          emailVerified: true,
-        }
-        
-        // Store admin user in localStorage
-        localStorage.setItem("mockUser", JSON.stringify(adminUser))
-        
-        toast({
-          title: "Welcome back! 🎉",
-          description: "You've been logged in successfully as Admin",
-        })
-        
-        router.push("/admin")
-        return
-      }
-
-      // Regular user login
       await login(email, password)
       toast({
         title: "Welcome back! 🎉",
-        description: "You've been logged in successfully",
+        description: "You've been logged in successfully as Admin",
       })
-
-      // Check for redirect parameter
-      const urlParams = new URLSearchParams(window.location.search)
-      const redirect = urlParams.get("redirect")
-
-      if (redirect === "payment") {
-        router.push("/payment")
-      } else {
-        router.push("/dashboard")
-      }
+      router.push("/admin")
     } catch (error) {
       toast({
         title: "Login failed",
@@ -93,9 +59,9 @@ export default function LoginPage() {
               <Shield className="w-8 h-8 text-white" />
             </div>
             <CardTitle className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-              Welcome Back
+              Admin Login
             </CardTitle>
-            <CardDescription className="text-lg text-gray-600">Sign in to your NYSC Platform account</CardDescription>
+            <CardDescription className="text-lg text-gray-600">Access admin dashboard</CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-6">
@@ -107,7 +73,7 @@ export default function LoginPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder="Enter admin email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -123,7 +89,7 @@ export default function LoginPage() {
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
+                    placeholder="Enter admin password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -154,28 +120,20 @@ export default function LoginPage() {
                 ) : (
                   <div className="flex items-center gap-2">
                     <Zap className="w-4 h-4" />
-                    Sign In
+                    Admin Login
                   </div>
                 )}
               </Button>
             </form>
 
             <div className="text-center pt-6 border-t border-gray-200">
-              <p className="text-gray-600">
-                Don't have an account?{" "}
-                <Link
-                  href="/register"
-                  className="text-green-600 hover:text-green-700 font-semibold hover:underline transition-colors"
-                >
-                  Create one now
-                </Link>
+              <p className="text-gray-600 text-sm">
+                Admin credentials: Admin@admin.com / Admin@123
               </p>
             </div>
-
-
           </CardContent>
         </Card>
       </div>
     </div>
   )
-}
+} 

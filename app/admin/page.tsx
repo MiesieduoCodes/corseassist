@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Navbar } from "@/components/navbar"
 import { useAuth } from "@/hooks/use-auth"
-import { Search, Download, Eye, CheckCircle, XCircle, Table, Phone, Mail, Calendar, CreditCard } from "lucide-react"
+import { Search, Download, Eye, CheckCircle, XCircle, Table, Phone, Mail, Calendar, CreditCard, LogOut } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 interface AdminRequest {
@@ -27,7 +27,7 @@ interface AdminRequest {
 }
 
 export default function AdminPage() {
-  const { user } = useAuth()
+  const { user, logout } = useAuth()
   const router = useRouter()
   const [requests, setRequests] = useState<AdminRequest[]>([])
   const [filteredRequests, setFilteredRequests] = useState<AdminRequest[]>([])
@@ -37,15 +37,18 @@ export default function AdminPage() {
   const [serviceFilter, setServiceFilter] = useState("all")
 
   useEffect(() => {
-    // Check if user is admin (you can implement proper role checking)
-    if (user && user.email !== "Admin@admin.com") {
-      router.push("/dashboard")
+    // Check if user is admin
+    if (!user) {
+      router.push("/admin-login")
       return
     }
 
-    if (user) {
-      loadRequests()
+    if (user.email !== "Admin@admin.com") {
+      router.push("/admin-login")
+      return
     }
+
+    loadRequests()
   }, [user, router])
 
   useEffect(() => {
@@ -64,47 +67,47 @@ export default function AdminPage() {
         const sampleRequests: AdminRequest[] = [
           {
             id: "sample_1",
-            userId: "user1",
-            service: "Direct Posting",
-            status: "pending",
-            amount: 25000,
-            createdAt: new Date("2024-01-15"),
-            formData: { fullName: "John Doe", preferredState: "Lagos" },
-            userEmail: "john@example.com",
+          userId: "user1",
+          service: "Direct Posting",
+          status: "pending",
+          amount: 25000,
+          createdAt: new Date("2024-01-15"),
+          formData: { fullName: "John Doe", preferredState: "Lagos" },
+          userEmail: "john@example.com",
             phoneNumber: "08012345678",
             transactionId: "TXN123456789",
             paymentMethod: "bank_transfer",
             fullName: "John Doe",
-          },
-          {
+        },
+        {
             id: "sample_2",
-            userId: "user2",
-            service: "Relocation",
-            status: "approved",
-            amount: 20000,
-            createdAt: new Date("2024-01-14"),
-            formData: { fullName: "Jane Smith", desiredState: "Abuja" },
-            userEmail: "jane@example.com",
+          userId: "user2",
+          service: "Relocation",
+          status: "approved",
+          amount: 20000,
+          createdAt: new Date("2024-01-14"),
+          formData: { fullName: "Jane Smith", desiredState: "Abuja" },
+          userEmail: "jane@example.com",
             phoneNumber: "08087654321",
             transactionId: "TXN987654321",
             paymentMethod: "bank_transfer",
             fullName: "Jane Smith",
-          },
-          {
+        },
+        {
             id: "sample_3",
-            userId: "user3",
-            service: "PPA Change",
-            status: "rejected",
+          userId: "user3",
+          service: "PPA Change",
+          status: "rejected",
             amount: 30000,
-            createdAt: new Date("2024-01-13"),
-            formData: { fullName: "Mike Johnson", desiredPPA: "Tech Company" },
-            userEmail: "mike@example.com",
+          createdAt: new Date("2024-01-13"),
+          formData: { fullName: "Mike Johnson", desiredPPA: "Tech Company" },
+          userEmail: "mike@example.com",
             phoneNumber: "08055555555",
             transactionId: "TXN555555555",
             paymentMethod: "bank_transfer",
             fullName: "Mike Johnson",
-          },
-        ]
+        },
+      ]
         setRequests(sampleRequests)
         localStorage.setItem("serviceRequests", JSON.stringify(sampleRequests))
       }
@@ -183,7 +186,14 @@ export default function AdminPage() {
   }
 
   if (!user || user.email !== "Admin@admin.com") {
-    return <div>Access denied</div>
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-red-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Access denied. Redirecting to login...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -191,9 +201,22 @@ export default function AdminPage() {
       <Navbar />
 
       <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
+        <div className="mb-8 flex justify-between items-center">
+          <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Admin Dashboard</h1>
           <p className="text-gray-600">Manage NYSC service requests and applications</p>
+          </div>
+          <Button 
+            variant="outline" 
+            onClick={() => {
+              logout()
+              router.push("/admin-login")
+            }}
+            className="flex items-center gap-2"
+          >
+            <LogOut className="w-4 h-4" />
+            Logout
+          </Button>
         </div>
 
         {/* Stats Cards */}
@@ -293,25 +316,25 @@ export default function AdminPage() {
           </CardContent>
         </Card>
 
-                 {/* Requests Table */}
-         <Card>
-           <CardHeader>
+        {/* Requests Table */}
+        <Card>
+          <CardHeader>
              <CardTitle className="flex items-center gap-2">
                <Table className="w-5 h-5" />
                Service Requests Table
              </CardTitle>
              <CardDescription>Manage and review all service applications with detailed information</CardDescription>
-           </CardHeader>
-           <CardContent>
-             {loading ? (
-               <div className="text-center py-8">Loading...</div>
-             ) : filteredRequests.length === 0 ? (
-               <div className="text-center py-8">
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="text-center py-8">Loading...</div>
+            ) : filteredRequests.length === 0 ? (
+              <div className="text-center py-8">
                  <Table className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                 <p className="text-gray-600">No requests found</p>
+                <p className="text-gray-600">No requests found</p>
                  <p className="text-sm text-gray-500">Service requests will appear here once users submit applications</p>
-               </div>
-             ) : (
+              </div>
+            ) : (
                <div className="overflow-x-auto">
                  <table className="w-full border-collapse">
                    <thead>
@@ -327,10 +350,10 @@ export default function AdminPage() {
                      </tr>
                    </thead>
                    <tbody>
-                     {filteredRequests.map((request) => (
+                {filteredRequests.map((request) => (
                        <tr key={request.id} className="border-b border-gray-100 hover:bg-gray-50">
                          <td className="p-3">
-                           <div>
+                      <div>
                              <p className="font-medium text-gray-900">
                                {request.formData?.fullName || request.fullName || "N/A"}
                              </p>
@@ -341,7 +364,7 @@ export default function AdminPage() {
                            <div className="flex items-center gap-1 text-sm text-gray-600">
                              <Phone className="w-3 h-3" />
                              {request.formData?.phoneNumber || request.phoneNumber || "N/A"}
-                           </div>
+                      </div>
                          </td>
                          <td className="p-3">
                            <Badge variant="outline" className="text-xs">
@@ -359,13 +382,13 @@ export default function AdminPage() {
                              <span className="text-xs font-mono text-gray-600">
                                {request.transactionId || "N/A"}
                              </span>
-                           </div>
+                      </div>
                          </td>
                          <td className="p-3">
                            <div className="flex items-center gap-1 text-sm text-gray-600">
                              <Calendar className="w-3 h-3" />
                              {new Date(request.createdAt).toLocaleDateString()}
-                           </div>
+                    </div>
                          </td>
                          <td className="p-3">
                            <Badge className={getStatusColor(request.status)}>
@@ -374,42 +397,42 @@ export default function AdminPage() {
                          </td>
                          <td className="p-3">
                            <div className="flex items-center gap-2">
-                             <Button variant="outline" size="sm">
+                      <Button variant="outline" size="sm">
                                <Eye className="w-3 h-3 mr-1" />
                                View
-                             </Button>
-                             {request.status === "pending" && (
+                      </Button>
+                      {request.status === "pending" && (
                                <>
-                                 <Button
-                                   size="sm"
-                                   variant="outline"
-                                   className="text-green-600 border-green-600 hover:bg-green-50 bg-transparent"
-                                   onClick={() => updateRequestStatus(request.id, "approved")}
-                                 >
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-green-600 border-green-600 hover:bg-green-50 bg-transparent"
+                            onClick={() => updateRequestStatus(request.id, "approved")}
+                          >
                                    <CheckCircle className="w-3 h-3 mr-1" />
-                                   Approve
-                                 </Button>
-                                 <Button
-                                   size="sm"
-                                   variant="outline"
-                                   className="text-red-600 border-red-600 hover:bg-red-50 bg-transparent"
-                                   onClick={() => updateRequestStatus(request.id, "rejected")}
-                                 >
+                            Approve
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-red-600 border-red-600 hover:bg-red-50 bg-transparent"
+                            onClick={() => updateRequestStatus(request.id, "rejected")}
+                          >
                                    <XCircle className="w-3 h-3 mr-1" />
-                                   Reject
-                                 </Button>
+                            Reject
+                          </Button>
                                </>
-                             )}
-                           </div>
+                      )}
+                    </div>
                          </td>
                        </tr>
-                     ))}
+                ))}
                    </tbody>
                  </table>
-               </div>
-             )}
-           </CardContent>
-         </Card>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   )
