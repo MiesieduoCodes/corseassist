@@ -10,7 +10,7 @@ export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
-    <nav className="bg-white/95 backdrop-blur-sm shadow-sm border-b sticky top-0 z-50">
+    <nav className="bg-white/95 backdrop-blur-sm shadow-sm border-b sticky top-0 z-50 w-full">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-2">
@@ -31,7 +31,7 @@ export function Navbar() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-8 bg-red-100 p-2 rounded">
             <Link href="/#services" className="text-gray-600 hover:text-green-600 transition-colors font-medium">
               Services
             </Link>
@@ -41,8 +41,8 @@ export function Navbar() {
             <Link href="/#contact" className="text-gray-600 hover:text-green-600 transition-colors font-medium">
               Contact
             </Link>
-            <Link href="/admin-login" className="text-gray-600 hover:text-green-600 transition-colors font-medium">
-              Admin
+            <Link href="/admin-login" className="text-green-600 hover:text-green-700 transition-colors font-medium font-semibold">
+              Admin Login
             </Link>
           </div>
 
@@ -54,7 +54,7 @@ export function Navbar() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t">
+          <div className="md:hidden py-4 border-t bg-blue-100">
             <div className="flex flex-col gap-4">
               <Link href="/#services" className="text-gray-600 hover:text-green-600 transition-colors font-medium">
                 Services
@@ -65,8 +65,8 @@ export function Navbar() {
               <Link href="/#contact" className="text-gray-600 hover:text-green-600 transition-colors font-medium">
                 Contact
               </Link>
-              <Link href="/admin-login" className="text-gray-600 hover:text-green-600 transition-colors font-medium">
-                Admin
+              <Link href="/admin-login" className="text-green-600 hover:text-green-700 transition-colors font-medium font-semibold">
+                Admin Login
               </Link>
             </div>
           </div>
