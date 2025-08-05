@@ -8,9 +8,8 @@ import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "NYSC Services Platform - Professional NYSC Solutions",
-  description: "Get professional assistance for NYSC direct posting, relocation, and PPA changes with 98% success rate",
-    generator: 'v0.dev'
+  title: "CorpsAssist - Professional NYSC Solutions",
+  description: "Get professional assistance for NYSC direct posting, relocation, and PPA changes with 80% success rate",
 }
 
 export default function RootLayout({

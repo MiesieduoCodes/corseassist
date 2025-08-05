@@ -1,11 +1,54 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { CheckCircle, Shield, Clock, Users, Star, ArrowRight, Zap, Award, Phone, Mail, MapPin } from "lucide-react"
 import Link from "next/link"
 import { Navbar } from "@/components/navbar"
+import { useState, useEffect } from "react"
+import Image from "next/image"
 
 export default function HomePage() {
+  // Slider state
+  const [currentSlide, setCurrentSlide] = useState(0)
+  
+  // Hero slider data
+  const heroSlides = [
+    {
+      id: 1,
+      title: "Direct Posting",
+      subtitle: "Get posted to your preferred state with guaranteed approval",
+      bgImage: "/1png.jpg",
+      ctaText: "Request Posting",
+      badgeText: "⭐ Most Popular Service"
+    },
+    {
+      id: 2,
+      title: "Stress-free Relocation",
+      subtitle: "Change your posting location during service year",
+      bgImage: "/2png.jpg",
+      ctaText: "Relocate Now",
+      badgeText: "🚀 Fast Processing"
+    },
+    {
+      id: 3,
+      title: "PPA Change",
+      subtitle: "Get your dream Place of Primary Assignment",
+      bgImage: "/3png.jpg",
+      ctaText: "Change PPA",
+      badgeText: "💼 Career Alignment"
+    }
+  ]
+
+  // Auto-rotate slides
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [])
+
   const services = [
     {
       title: "Direct Posting",
@@ -74,58 +117,68 @@ export default function HomePage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-green-600/10 to-blue-600/10" />
-        <div className="container mx-auto px-4 py-20 relative">
-          <div className="text-center max-w-5xl mx-auto">
-            <div className="flex justify-center mb-6">
-              <Badge className="mb-4 bg-gradient-to-r from-green-600 to-blue-600 text-white hover:from-green-700 hover:to-blue-700 px-4 py-2 text-sm font-medium">
-                ⭐ Trusted by 5,000+ Corps Members
-              </Badge>
-            </div>
-
-            <h1 className="text-6xl md:text-7xl font-bold text-gray-900 mb-8 leading-tight">
-              Your Gateway to
-              <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent block">
-                Seamless NYSC Services
-              </span>
-            </h1>
-
-            <p className="text-xl md:text-2xl text-gray-600 mb-10 leading-relaxed max-w-3xl mx-auto">
-              Professional assistance for direct posting, relocation, and PPA changes.
-              <span className="font-semibold text-green-600">Fast, secure, and reliable</span> service with 98% success
-              rate.
-            </p>
-
-            <div className="flex justify-center mb-12">
-              <Button
-                asChild
-                size="lg"
-                className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                <Link href="#services" className="flex items-center gap-2">
-                  View Services <ArrowRight className="w-5 h-5" />
-                </Link>
-              </Button>
-            </div>
-
-            {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-500">
-              <div className="flex items-center gap-2">
-                <Shield className="w-4 h-4 text-green-600" />
-                <span>SSL Secured</span>
+      {/* Hero Slider Section with Dark Gradient */}
+      <section className="relative h-screen max-h-[800px] overflow-hidden">
+        {/* Slides */}
+        <div className="relative h-full w-full">
+          {heroSlides.map((slide, index) => (
+            <div 
+              key={slide.id}
+              className={`absolute inset-0 transition-opacity duration-1000 ${index === currentSlide ? 'opacity-100' : 'opacity-0'}`}
+            >
+              {/* Background Image with gradient overlay */}
+              <div className="absolute inset-0">
+                <Image
+                  src={slide.bgImage}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  priority={index === 0}
+                />
+                {/* Dark gradient from top to bottom */}
+                <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-black/20"></div>
               </div>
-              <div className="flex items-center gap-2">
-                <Award className="w-4 h-4 text-blue-600" />
-                <span>Licensed & Verified</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Zap className="w-4 h-4 text-orange-600" />
-                <span>24/7 Support</span>
+              
+              {/* Slide Content */}
+              <div className="container mx-auto px-4 h-full flex items-center relative z-10">
+                <div className="text-center max-w-3xl mx-auto text-white">
+                  <Badge className="mb-6 bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 border-white/20">
+                    {slide.badgeText}
+                  </Badge>
+                  
+                  <h1 className="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                    {slide.title}
+                  </h1>
+                  
+                  <p className="text-xl md:text-2xl mb-8 leading-relaxed">
+                    {slide.subtitle}
+                  </p>
+                  
+                  <Button
+                    asChild
+                    size="lg"
+                    className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-8 py-4 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                  >
+                    <Link href="#services" className="flex items-center gap-2">
+                      {slide.ctaText} <ArrowRight className="w-5 h-5" />
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
+          ))}
+        </div>
+        
+        {/* Slider Controls */}
+        <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-2 z-10">
+          {heroSlides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`w-3 h-3 rounded-full transition-all ${index === currentSlide ? 'bg-white w-6' : 'bg-white/50'}`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
         </div>
       </section>
 
@@ -263,79 +316,77 @@ export default function HomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-5 gap-8 mb-12">
-            <div className="md:col-span-2">
-              <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
-                NYSC Platform
-              </h3>
-              <p className="text-gray-400 mb-6 leading-relaxed">
-                Your trusted partner for all NYSC services and requirements. We make your service year journey smooth
-                and successful.
-              </p>
-              <div className="flex gap-4">
-                <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors cursor-pointer">
-                  <span className="text-sm font-bold">f</span>
-                </div>
-                <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors cursor-pointer">
-                  <span className="text-sm font-bold">t</span>
-                </div>
-                <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors cursor-pointer">
-                  <span className="text-sm font-bold">in</span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-6 text-lg">Services</h4>
-              <ul className="space-y-3 text-gray-400">
-                <li className="hover:text-white transition-colors cursor-pointer">Direct Posting</li>
-                <li className="hover:text-white transition-colors cursor-pointer">Relocation</li>
-                <li className="hover:text-white transition-colors cursor-pointer">PPA Change</li>
-                <li className="hover:text-white transition-colors cursor-pointer">Document Processing</li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-6 text-lg">Support</h4>
-              <ul className="space-y-3 text-gray-400">
-                <li className="hover:text-white transition-colors cursor-pointer">Help Center</li>
-                <li className="hover:text-white transition-colors cursor-pointer">Contact Us</li>
-                <li className="hover:text-white transition-colors cursor-pointer">FAQ</li>
-                <li className="hover:text-white transition-colors cursor-pointer">Live Chat</li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-semibold mb-6 text-lg">Contact</h4>
-              <ul className="space-y-3 text-gray-400">
-                <li className="flex items-center gap-2">
-                  <Mail className="w-4 h-4" />
-                  <span>support@nyscplatform.com</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Phone className="w-4 h-4" />
-                  <span>+234 800 123 4567</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <MapPin className="w-4 h-4" />
-                  <span>Lagos, Nigeria</span>
-                </li>
-              </ul>
-            </div>
+{/* Footer */}
+<footer className="bg-gray-900 text-white py-16">
+  <div className="container mx-auto px-4">
+    <div className="grid md:grid-cols-5 gap-8 mb-12">
+      <div className="md:col-span-2">
+        <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+          CorpsAssist
+        </h3>
+        <p className="text-gray-400 mb-6 leading-relaxed">
+          Your trusted partner for all NYSC services and requirements. We make your service year journey smooth
+          and successful.
+        </p>
+        <div className="flex gap-4">
+          <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors cursor-pointer">
+            <span className="text-sm font-bold">f</span>
           </div>
-
-          <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400 mb-4 md:mb-0">&copy; 2024 NYSC Platform. All rights reserved.</p>
-            <div className="flex gap-6 text-sm text-gray-400">
-              <span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span>
-              <span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span>
-              <span className="hover:text-white transition-colors cursor-pointer">Cookie Policy</span>
-            </div>
+          <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors cursor-pointer">
+            <span className="text-sm font-bold">t</span>
+          </div>
+          <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors cursor-pointer">
+            <span className="text-sm font-bold">in</span>
           </div>
         </div>
-      </footer>
+      </div>
+
+      <div>
+        <h4 className="font-semibold mb-6 text-lg">Services</h4>
+        <ul className="space-y-3 text-gray-400">
+          <li className="hover:text-white transition-colors cursor-pointer">Direct Posting</li>
+          <li className="hover:text-white transition-colors cursor-pointer">Relocation</li>
+          <li className="hover:text-white transition-colors cursor-pointer">PPA Change</li>
+          <li className="hover:text-white transition-colors cursor-pointer">Document Processing</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 className="font-semibold mb-6 text-lg">Support</h4>
+        <ul className="space-y-3 text-gray-400">
+          <li className="hover:text-white transition-colors cursor-pointer">Help Center</li>
+          <li className="hover:text-white transition-colors cursor-pointer">Contact Us</li>
+          <li className="hover:text-white transition-colors cursor-pointer">FAQ</li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 className="font-semibold mb-6 text-lg">Contact</h4>
+        <ul className="space-y-3 text-gray-400">
+          <li className="flex items-center gap-2">
+            <Mail className="w-4 h-4" />
+            <a href="mailto:Choowally8@gmail.com" className="hover:text-white transition-colors">
+              support@corpsassist.shop
+            </a>
+          </li>
+          <li className="flex items-center gap-2">
+            <MapPin className="w-4 h-4" />
+            <span>Lagos, Nigeria</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+      <p className="text-gray-400 mb-4 md:mb-0">&copy; 2025 CorpsAssist. All rights reserved.</p>
+      <div className="flex gap-6 text-sm text-gray-400">
+        <span className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span>
+        <span className="hover:text-white transition-colors cursor-pointer">Terms of Service</span>
+        <span className="hover:text-white transition-colors cursor-pointer">Cookie Policy</span>
+      </div>
+    </div>
+  </div>
+</footer>
     </div>
   )
 }

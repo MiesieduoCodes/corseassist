@@ -4,6 +4,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import { useState } from "react"
+import Image from "next/image"
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -12,12 +13,22 @@ export function Navbar() {
     <nav className="bg-white/95 backdrop-blur-sm shadow-sm border-b sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
-          <Link
-            href="/"
-            className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent"
-          >
-            NYSC Platform
-          </Link>
+          <div className="flex items-center gap-2">
+            {/* Logo Image */}
+            <Image
+              src="/logo.png"
+              alt="CorpsAssist Logo"
+              width={60}
+              height={60}
+              className="h-8 w-auto"
+            />
+            <Link
+              href="/"
+              className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent"
+            >
+              CorpsAssist
+            </Link>
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
@@ -30,15 +41,6 @@ export function Navbar() {
             <Link href="/#contact" className="text-gray-600 hover:text-green-600 transition-colors font-medium">
               Contact
             </Link>
-          </div>
-
-          <div className="hidden md:flex items-center">
-            <Button
-              asChild
-              className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white shadow-md"
-            >
-              <Link href="/#services">Get Started</Link>
-            </Button>
           </div>
 
           {/* Mobile Menu Button */}
@@ -60,14 +62,6 @@ export function Navbar() {
               <Link href="/#contact" className="text-gray-600 hover:text-green-600 transition-colors font-medium">
                 Contact
               </Link>
-              <div className="pt-4 border-t">
-                <Button
-                  asChild
-                  className="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white w-full"
-                >
-                  <Link href="/#services">Get Started</Link>
-                </Button>
-              </div>
             </div>
           </div>
         )}
