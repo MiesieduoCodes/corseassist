@@ -4,7 +4,6 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 import { useState } from "react"
-import Image from "next/image"
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -14,14 +13,7 @@ export function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-2">
-            {/* Logo Image */}
-            <Image
-              src="/logo.png"
-              alt="CorpsAssist Logo"
-              width={60}
-              height={60}
-              className="h-8 w-auto"
-            />
+
             <Link
               href="/"
               className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent"
@@ -31,7 +23,7 @@ export function Navbar() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8 bg-red-100 p-2 rounded">
+          <div className="hidden md:flex items-center gap-8">
             <Link href="/#services" className="text-gray-600 hover:text-green-600 transition-colors font-medium">
               Services
             </Link>
@@ -54,7 +46,7 @@ export function Navbar() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-4 border-t bg-blue-100">
+          <div className="md:hidden py-4 border-t">
             <div className="flex flex-col gap-4">
               <Link href="/#services" className="text-gray-600 hover:text-green-600 transition-colors font-medium">
                 Services

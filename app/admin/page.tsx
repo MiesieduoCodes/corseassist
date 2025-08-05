@@ -61,55 +61,15 @@ export default function AdminPage() {
       const storedRequests = localStorage.getItem("serviceRequests")
       if (storedRequests) {
         const requests = JSON.parse(storedRequests)
-        setRequests(requests)
+        // Filter out any mock/sample data
+        const realRequests = requests.filter((request: AdminRequest) => 
+          !request.id.startsWith('sample_') && 
+          !request.id.startsWith('mock_')
+        )
+        setRequests(realRequests)
       } else {
-        // Add some sample data for testing
-        const sampleRequests: AdminRequest[] = [
-          {
-            id: "sample_1",
-          userId: "user1",
-          service: "Direct Posting",
-          status: "pending",
-          amount: 25000,
-          createdAt: new Date("2024-01-15"),
-          formData: { fullName: "John Doe", preferredState: "Lagos" },
-          userEmail: "john@example.com",
-            phoneNumber: "08012345678",
-            transactionId: "TXN123456789",
-            paymentMethod: "bank_transfer",
-            fullName: "John Doe",
-        },
-        {
-            id: "sample_2",
-          userId: "user2",
-          service: "Relocation",
-          status: "approved",
-          amount: 20000,
-          createdAt: new Date("2024-01-14"),
-          formData: { fullName: "Jane Smith", desiredState: "Abuja" },
-          userEmail: "jane@example.com",
-            phoneNumber: "08087654321",
-            transactionId: "TXN987654321",
-            paymentMethod: "bank_transfer",
-            fullName: "Jane Smith",
-        },
-        {
-            id: "sample_3",
-          userId: "user3",
-          service: "PPA Change",
-          status: "rejected",
-            amount: 30000,
-          createdAt: new Date("2024-01-13"),
-          formData: { fullName: "Mike Johnson", desiredPPA: "Tech Company" },
-          userEmail: "mike@example.com",
-            phoneNumber: "08055555555",
-            transactionId: "TXN555555555",
-            paymentMethod: "bank_transfer",
-            fullName: "Mike Johnson",
-        },
-      ]
-        setRequests(sampleRequests)
-        localStorage.setItem("serviceRequests", JSON.stringify(sampleRequests))
+        // No data available - show empty state
+        setRequests([])
       }
     } catch (error) {
       console.error("Error loading requests:", error)
